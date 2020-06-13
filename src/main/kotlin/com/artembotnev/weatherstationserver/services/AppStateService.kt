@@ -9,9 +9,8 @@ import org.springframework.stereotype.Service
  */
 @Service
 class AppStateService {
-
     @Value("\${spring.application.name}")
-    lateinit var appName: String
+    private lateinit var appName: String
 
-    fun getCurrentStateMessage() = AppState().toString()
+    fun getCurrentStateMessage() = AppState(appName).toString()
 }

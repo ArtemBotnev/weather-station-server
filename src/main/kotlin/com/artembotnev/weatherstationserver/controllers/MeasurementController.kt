@@ -1,6 +1,7 @@
 package com.artembotnev.weatherstationserver.controllers
 
 import com.artembotnev.weatherstationserver.data.Measurement
+import com.artembotnev.weatherstationserver.data.Response
 import org.springframework.web.bind.annotation.*
 
 /**
@@ -8,14 +9,13 @@ import org.springframework.web.bind.annotation.*
  */
 @RestController
 @RequestMapping("/measurement")
+@ResponseBody
 class MeasurementController {
 
-    @PostMapping("/add/{id}", consumes = ["application/json;charset=utf-8"])
+    @PostMapping("/v1.0/add/{id}", consumes = ["application/json;charset=utf-8"])
     fun postMeasurement(
             @RequestHeader("token") token: String,
             @PathVariable id: String,
             @RequestBody measurement: Measurement
-    ) {
-
-    }
+    ): Response = Response(true, "")
 }

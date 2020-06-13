@@ -2,11 +2,12 @@ package com.artembotnev.weatherstationserver
 
 import com.artembotnev.weatherstationserver.data.Measure
 import com.artembotnev.weatherstationserver.data.Measurement
+import com.artembotnev.weatherstationserver.data.Response
+import jdk.nashorn.internal.ir.annotations.Ignore
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
 import org.springframework.web.client.RestTemplate
 import java.time.LocalDate
@@ -17,6 +18,7 @@ import kotlin.random.Random
 class MeasurementControllerIntegrationTest {
 
     @Test
+    @Ignore
     fun addMeasurementAndCheck() {
         val tokenKey = "token"
         val measurement = createMeasurement()
@@ -27,18 +29,17 @@ class MeasurementControllerIntegrationTest {
         headers.add(tokenKey, token)
 
         val entity = HttpEntity(measurement, headers)
-        val template = RestTemplate()
 
-        val receivedMeasurement = template.exchange(
-                "$ROOT$ADD/1" ,
-                HttpMethod.POST,
+        val response = RestTemplate().postForEntity(
+                "$ROOT$V_1_0$ADD/1",
                 entity,
-                Measurement::class.java
+                Response::class.java
         )
 
-        assertEquals(token, receivedMeasurement.headers[tokenKey])
-        assertNotNull(receivedMeasurement)
-        assertEquals(measurement, receivedMeasurement.body)
+        assertNotNull(response)
+        assertEquals("OK", response.statusCode.reasonPhrase)
+        assertNotNull(response.body)
+        assertTrue(response.body!!.success)
     }
 
     private fun createMeasurement(): Measurement {
@@ -76,6 +77,7 @@ class MeasurementControllerIntegrationTest {
 
     companion object {
         private const val ROOT = "http://localhost:8080/measurement"
+        private const val V_1_0 = "/v1.0"
         private const val ADD = "/add"
     }
 }

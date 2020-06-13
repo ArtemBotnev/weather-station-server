@@ -32,3 +32,8 @@ data class Measurement(
         val time: String,
         val measures: List<Measure>
 )
+
+class Response(
+        val success: Boolean = false,
+        val message: String = ""
+)
