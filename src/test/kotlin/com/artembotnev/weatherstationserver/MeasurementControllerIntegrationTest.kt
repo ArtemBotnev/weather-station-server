@@ -3,7 +3,6 @@ package com.artembotnev.weatherstationserver
 import com.artembotnev.weatherstationserver.data.Measure
 import com.artembotnev.weatherstationserver.data.Measurement
 import com.artembotnev.weatherstationserver.data.Response
-import jdk.nashorn.internal.ir.annotations.Ignore
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpEntity
@@ -18,11 +17,11 @@ import kotlin.random.Random
 class MeasurementControllerIntegrationTest {
 
     @Test
-    @Ignore
     fun addMeasurementAndCheck() {
         val tokenKey = "token"
+        val token = "d17f25ecfbcc7857f7bebea469308be0b2580943e96d13a3ad98a13675c4bfc2"
+        val deviceId = 1
         val measurement = createMeasurement()
-        val token = "12sdfksjdi323434"
 
         val headers = HttpHeaders()
         headers.contentType = MediaType.APPLICATION_JSON
@@ -31,7 +30,7 @@ class MeasurementControllerIntegrationTest {
         val entity = HttpEntity(measurement, headers)
 
         val response = RestTemplate().postForEntity(
-                "$ROOT$V_1_0$ADD/1",
+                "$ROOT$V_1_0$ADD/$deviceId",
                 entity,
                 Response::class.java
         )
@@ -40,6 +39,17 @@ class MeasurementControllerIntegrationTest {
         assertEquals("OK", response.statusCode.reasonPhrase)
         assertNotNull(response.body)
         assertTrue(response.body!!.success)
+
+        // get method
+        val getResponse = RestTemplate().getForEntity(
+                "$ROOT$V_1_0?id=$deviceId",
+                Measurement::class.java
+        )
+
+        assertNotNull(getResponse)
+        assertEquals("OK", getResponse.statusCode.reasonPhrase)
+        assertNotNull(getResponse.body)
+        assertEquals(measurement, getResponse.body)
     }
 
     private fun createMeasurement(): Measurement {

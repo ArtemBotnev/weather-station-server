@@ -1,8 +1,5 @@
 package com.artembotnev.weatherstationserver.data
 
-/**
- * Created by Artem Botnev on June 10 2020
- */
 data class Device(
         val id: Int,
         val model: String?,

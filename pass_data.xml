@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--example only for test-->
+<devices>
+    <device id="1">11111</device>
+    <device id="2">22222</device>
+</devices>

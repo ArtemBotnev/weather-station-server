@@ -15,6 +15,7 @@ java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
     mavenCentral()
+    maven { url = uri("https://jitpack.io") }
 }
 
 dependencies {
@@ -22,6 +23,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+
+    implementation("com.github.ArtemBotnev:low-level-extensions:1.1.0")
     // jpa
 //    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
@@ -29,6 +32,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
+    testImplementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.0")
 }
 
 // jpa
