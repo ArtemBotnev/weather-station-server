@@ -5,5 +5,5 @@ data class MeasureDailyCalculation(
     val maxValue: Double,
     val minValue: Double,
     val averageValue: Double,
-    val factor: Double,
+    val factor: Int = 0,
 )
