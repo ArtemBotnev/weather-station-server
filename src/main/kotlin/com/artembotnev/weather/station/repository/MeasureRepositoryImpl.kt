@@ -13,28 +13,6 @@ private const val MEASURE_FLOW_EXTRA_BUFFER_CAPACITY = 100
 
 internal class MeasureRepositoryImpl(private val storage: MeasureInMemoryStorage) : MeasureRepository {
 
-//    override var measurement: Measurement?
-//        get() = Measurement(
-//            timestamp = "2024-09-09T17:09:31+00:00",
-//            timeZoneHours = 3,
-//            device = Device(
-//                id = 0,
-//                type = "Controller",
-//                name = "Test controller",
-//                location = "My sweet home"
-//            ),
-//            measures = listOf(
-//                Measure(
-//                    sensorId = "Sensor_0",
-//                    sensorName = "cool sensor",
-//                    measureName = "temperature",
-//                    sensorPlace = "room"
-//                    measureUnit = "Celsius",
-//                    measureValue = 27.23
-//                )
-//            )
-//        )
-
     private val measureFlow = MutableSharedFlow<Measurement>(
         replay = MEASURE_FLOW_REPLAY,
         extraBufferCapacity = MEASURE_FLOW_EXTRA_BUFFER_CAPACITY,
@@ -52,7 +30,15 @@ internal class MeasureRepositoryImpl(private val storage: MeasureInMemoryStorage
 
     override fun observeMeasure(): SharedFlow<Measurement> = measureFlow
 
-    override suspend fun getMeasureDailyCalculation(sensorId: String): MeasureDailyCalculation {
-        TODO("Not yet implemented")
+    override suspend fun getMeasureDailyCalculation(sensorId: String): MeasureDailyCalculation? {
+        return storage.getMeasureDailyCalculation(sensorId)
+    }
+
+    override suspend fun setMeasureDailyCalculations(mdcList: List<MeasureDailyCalculation>) {
+        storage.setMeasureDailyCalculations(mdcList)
+    }
+
+    override suspend fun clearCache() {
+        storage.clearCache()
     }
 }

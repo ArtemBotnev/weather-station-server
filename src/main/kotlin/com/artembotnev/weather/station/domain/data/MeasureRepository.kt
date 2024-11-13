@@ -9,6 +9,7 @@ internal interface MeasureRepository {
     suspend fun setMeasurement(measurement: Measurement?)
     suspend fun getMeasurement(deviceId: Int): Measurement?
     suspend fun getMeasureDailyCalculation(sensorId: String): MeasureDailyCalculation?
-    suspend fun save
+    suspend fun setMeasureDailyCalculations(mdcList: List<MeasureDailyCalculation>)
+    suspend fun clearCache()
     fun observeMeasure(): SharedFlow<Measurement>
 }

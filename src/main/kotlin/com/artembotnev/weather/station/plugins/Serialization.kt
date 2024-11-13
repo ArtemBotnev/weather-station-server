@@ -27,9 +27,16 @@ fun Application.configureSerialization() {
         )
     }
     routing {
-        get("/measurement") {
-//            TODO: add parameter
-            measureService.getMeasurement(0)?.let {
+        get("/last_measurement/{device_id}") {
+            val deviceId = call.parameters["device_id"]
+                ?: return@get call.respondText("Device id not found", status = HttpStatusCode.NotFound)
+            val id = try {
+                deviceId.toInt()
+            } catch (e: NumberFormatException) {
+                return@get call.respondText("Wrong device id format, use integer", status = HttpStatusCode.BadRequest)
+            }
+            val showAdditionalData = call.request.queryParameters["additional"] == "true"
+            measureService.getMeasurement(id, showAdditionalData)?.let {
                 call.respond(Json.encodeToString(serializer<Measurement>(), it))
             } ?: call.respondText("Measurement for this device not found", status = HttpStatusCode.NotFound)
         }
@@ -42,6 +49,10 @@ fun Application.configureSerialization() {
             } catch (t: Throwable) {
                 this@configureSerialization.log.error(t.message)
             }
+        }
+        post("/clear_cache") {
+            measureService.clearCache()
+            call.respondText("Cache was cleared successfully", status = HttpStatusCode.OK)
         }
     }
 }

@@ -30,7 +30,7 @@ internal class MeasureDailyCalculationService(
         scope.launch {
             withContext(ioDispatcher) {
                 measurementObserver.collect {
-//                 save to repository here !!!
+                    repository.setMeasureDailyCalculations(it)
                 }
             }
         }
@@ -40,6 +40,7 @@ internal class MeasureDailyCalculationService(
         // need for service start
     }
 
+//    TODO("Add reset on each new day at 00:00!!!!")
     private suspend fun calculateDailyValues(measurement: Measurement): List<MeasureDailyCalculation> {
         return measurement.measures
             .map { measure ->
@@ -64,7 +65,7 @@ internal class MeasureDailyCalculationService(
         return if (factor == 0) {
             newValue
         } else {
-            (oldAverageValue * factor + newValue) / factor + 1
+            (oldAverageValue * factor + newValue) / (factor + 1)
         }
     }
 }

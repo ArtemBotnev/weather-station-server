@@ -1,6 +1,8 @@
 package com.artembotnev.weather.station.domain
 
 import com.artembotnev.weather.station.domain.data.MeasureRepository
+import com.artembotnev.weather.station.domain.entity.Measure
+import com.artembotnev.weather.station.domain.entity.MeasureDailyCalculation
 import com.artembotnev.weather.station.domain.entity.Measurement
 
 
@@ -10,5 +12,33 @@ internal class MeasureService(private val repository: MeasureRepository) {
         repository.setMeasurement(measurement)
     }
 
-    suspend fun getMeasurement(deviceId: Int) = repository.getMeasurement(deviceId)
+    suspend fun getMeasurement(deviceId: Int, showAdditionalData: Boolean = false): Measurement? {
+        val measurement = repository.getMeasurement(deviceId) ?: return null
+        if (showAdditionalData) {
+            val measuresWithCalculations = measurement.measures
+                .map { measure ->
+                    measure.copy(
+                        dailyCalculation = repository
+                            .getMeasureDailyCalculation(measure.sensorId)
+                            ?.toDailyCalculation(),
+                    )
+                }
+
+            return measurement.copy(measures = measuresWithCalculations)
+        } else {
+            return measurement
+        }
+    }
+
+    suspend fun clearCache() {
+        repository.clearCache()
+    }
+
+    private fun MeasureDailyCalculation.toDailyCalculation(): Measure.DailyCalculation {
+        return Measure.DailyCalculation(
+            maxValue = maxValue,
+            minValue = minValue,
+            averageValue = averageValue,
+        )
+    }
 }
