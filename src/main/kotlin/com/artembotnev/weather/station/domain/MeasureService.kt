@@ -6,10 +6,25 @@ import com.artembotnev.weather.station.domain.entity.MeasureDailyCalculation
 import com.artembotnev.weather.station.domain.entity.Measurement
 
 
-internal class MeasureService(private val repository: MeasureRepository) {
+internal class MeasureService(
+    private val dataTimeService: DateTimeService,
+    private val repository: MeasureRepository
+) {
 
     suspend fun setMeasurement(measurement: Measurement?) {
-        repository.setMeasurement(measurement)
+        if (measurement == null) return
+
+        val dateTimePack = dataTimeService.getDateTimePack(measurement.timeZoneHours)
+        val lastMeasurement = repository.getMeasurement(measurement.device.id)
+        val isNewDay = dateTimePack.dayOfMonth != lastMeasurement?.currentDay
+
+        val updatedMeasurement = measurement.copy(
+            timestamp = measurement.timestamp ?: dateTimePack.timestamp,
+            currentDay = dateTimePack.dayOfMonth,
+            isNewDay = isNewDay,
+        )
+
+        repository.setMeasurement(updatedMeasurement)
     }
 
     suspend fun getMeasurement(deviceId: Int, showAdditionalData: Boolean = false): Measurement? {
