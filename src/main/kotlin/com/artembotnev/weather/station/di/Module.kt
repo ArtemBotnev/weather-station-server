@@ -6,6 +6,7 @@ import com.artembotnev.weather.station.storage.MeasureInMemoryStorageImpl
 import com.artembotnev.weather.station.repository.MeasureRepositoryImpl
 import com.artembotnev.weather.station.domain.MeasureService
 import com.artembotnev.weather.station.domain.MeasureDailyCalculationService
+import com.artembotnev.weather.station.domain.DateTimeService
 import kotlinx.coroutines.Dispatchers
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
@@ -23,6 +24,8 @@ internal val appModule = module {
     singleOf(::MeasureInMemoryStorageImpl) { bind<MeasureInMemoryStorage>() }
     singleOf(::MeasureRepositoryImpl) { bind<MeasureRepository>() }
     singleOf(::MeasureService)
+    singleOf(::DateTimeService)
+
     single {
         MeasureDailyCalculationService(
             get(),
