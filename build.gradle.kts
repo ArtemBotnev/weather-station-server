@@ -7,7 +7,7 @@ val caffeine_version = "3.1.8"
 
 plugins {
     kotlin("jvm") version "2.0.20"
-    id("io.ktor.plugin") version "2.3.12"
+    id("io.ktor.plugin") version "3.0.1"
     id("org.jetbrains.kotlin.plugin.serialization") version "2.0.20"
 }
 
@@ -15,7 +15,7 @@ group = "com.artembotnev"
 version = "1.0.0"
 
 application {
-    mainClass.set("com.artembotnev.ApplicationKt")
+    mainClass.set("com.artembotnev.weather.station.ApplicationKt")
 
     val isDevelopment: Boolean = project.ext.has("development")
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
