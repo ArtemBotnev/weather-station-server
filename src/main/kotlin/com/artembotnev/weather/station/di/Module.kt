@@ -7,6 +7,7 @@ import com.artembotnev.weather.station.repository.MeasureRepositoryImpl
 import com.artembotnev.weather.station.domain.MeasureService
 import com.artembotnev.weather.station.domain.MeasureDailyCalculationService
 import com.artembotnev.weather.station.domain.DateTimeService
+import com.artembotnev.weather.station.domain.DeviceService
 import kotlinx.coroutines.Dispatchers
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
@@ -25,6 +26,7 @@ internal val appModule = module {
     singleOf(::MeasureRepositoryImpl) { bind<MeasureRepository>() }
     singleOf(::MeasureService)
     singleOf(::DateTimeService)
+    singleOf(::DeviceService)
 
     single {
         MeasureDailyCalculationService(

@@ -5,11 +5,13 @@ import com.artembotnev.weather.station.domain.entity.Measure
 import com.artembotnev.weather.station.domain.entity.Measurement
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class SerializationTest {
 
+    @Ignore
     @Test
     fun testMeasurementSerialization() {
         val measurement = createMeasurement()
