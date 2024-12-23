@@ -1,6 +1,7 @@
 package com.artembotnev.weather.station.repository
 
 import com.artembotnev.weather.station.domain.data.MeasureRepository
+import com.artembotnev.weather.station.domain.entity.Device
 import com.artembotnev.weather.station.domain.entity.MeasureDailyCalculation
 import com.artembotnev.weather.station.domain.entity.Measurement
 import com.artembotnev.weather.station.storage.MeasureInMemoryStorage
@@ -32,6 +33,10 @@ internal class MeasureRepositoryImpl(private val storage: MeasureInMemoryStorage
 
     override suspend fun getMeasureDailyCalculation(sensorId: String): MeasureDailyCalculation? {
         return storage.getMeasureDailyCalculation(sensorId)
+    }
+
+    override suspend fun getDevices(): List<Device> {
+        return storage.getDevices()
     }
 
     override suspend fun setMeasureDailyCalculations(mdcList: List<MeasureDailyCalculation>) {

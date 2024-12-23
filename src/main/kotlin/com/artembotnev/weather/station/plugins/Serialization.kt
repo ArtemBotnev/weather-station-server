@@ -1,7 +1,9 @@
 package com.artembotnev.weather.station.plugins
 
+import com.artembotnev.weather.station.domain.DeviceService
 import com.artembotnev.weather.station.domain.MeasureDailyCalculationService
 import com.artembotnev.weather.station.domain.MeasureService
+import com.artembotnev.weather.station.domain.entity.Device
 import com.artembotnev.weather.station.domain.entity.Measurement
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
@@ -17,6 +19,7 @@ import org.koin.ktor.ext.inject
 fun Application.configureSerialization() {
     val measureService by inject<MeasureService>()
     val dailyCalculations by inject<MeasureDailyCalculationService>()
+    val deviceService by inject<DeviceService>()
 
     install(ContentNegotiation) {
         json(
@@ -33,12 +36,21 @@ fun Application.configureSerialization() {
             val id = try {
                 deviceId.toInt()
             } catch (e: NumberFormatException) {
+                this@configureSerialization.log.error(e.message)
                 return@get call.respondText("Wrong device id format, use integer", status = HttpStatusCode.BadRequest)
             }
             val showAdditionalData = call.request.queryParameters["additional"] == "true"
             measureService.getMeasurement(id, showAdditionalData)?.let {
                 call.respond(Json.encodeToString(serializer<Measurement>(), it))
             } ?: call.respondText("Measurement for this device not found", status = HttpStatusCode.NotFound)
+        }
+        get("/devices") {
+            try {
+                val devices = deviceService.getDevices()
+                return@get call.respond(Json.encodeToString(serializer<List<Device>>(), devices))
+            } catch (t: Throwable) {
+                this@configureSerialization.log.error(t.message)
+            }
         }
         post("/send_measurement")  {
             val measurement = call.receive<Measurement>()
