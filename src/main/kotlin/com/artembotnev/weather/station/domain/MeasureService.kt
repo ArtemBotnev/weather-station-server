@@ -54,6 +54,8 @@ internal class MeasureService(
             maxValue = maxValue,
             minValue = minValue,
             averageValue = averageValue,
+            maxValueTime = maxValueTime,
+            minValueTime = minValueTime
         )
     }
 }

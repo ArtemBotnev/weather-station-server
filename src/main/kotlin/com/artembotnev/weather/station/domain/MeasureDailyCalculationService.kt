@@ -53,9 +53,9 @@ internal class MeasureDailyCalculationService(
 
     private suspend fun calculateDailyValues(measurement: Measurement): List<MeasureDailyCalculation> {
         return if (measurement.isNewDay) {
-            measurement.measures.map { it.toNewDayCalculations() }
+            measurement.measures.map { it.toNewDayCalculations(measurement.timestamp) }
         } else {
-            measurement.measures.map { it.toCalculations() }
+            measurement.measures.map { it.toCalculations(measurement.timestamp) }
         }
     }
 
@@ -67,15 +67,17 @@ internal class MeasureDailyCalculationService(
         }
     }
 
-    private fun Measure.toNewDayCalculations() = MeasureDailyCalculation(
+    private fun Measure.toNewDayCalculations(timeStamp: String? = null) = MeasureDailyCalculation(
         sensorId = sensorId,
         maxValue = measureValue,
         minValue = measureValue,
+        maxValueTime = timeStamp,
+        minValueTime = timeStamp,
         averageValue = measureValue,
         factor = FACTOR_START_VALUE,
     )
 
-    private suspend fun Measure.toCalculations(): MeasureDailyCalculation {
+    private suspend fun Measure.toCalculations(timeStamp: String? = null): MeasureDailyCalculation {
         val old = repository.getMeasureDailyCalculation(sensorId)
 
         return MeasureDailyCalculation(
@@ -90,6 +92,12 @@ internal class MeasureDailyCalculationService(
                 )
             } ?: measureValue,
             factor = old?.let { it.factor + FACTOR_INCREMENT_STEP } ?: FACTOR_START_VALUE,
+            maxValueTime = old?.let {
+                if (measureValue > it.maxValue) timeStamp else it.maxValueTime
+            },
+            minValueTime = old?.let {
+                if (measureValue < it.minValue) timeStamp else it.minValueTime
+            }
         )
     }
 }

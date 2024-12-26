@@ -17,5 +17,7 @@ data class Measure(
         val maxValue: Double,
         val minValue: Double,
         val averageValue: Double,
+        val maxValueTime: String?,
+        val minValueTime: String?,
     )
 }
