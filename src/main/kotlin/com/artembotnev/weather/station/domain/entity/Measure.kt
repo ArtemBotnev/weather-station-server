@@ -10,12 +10,15 @@ data class Measure(
     val measureName: String,
     val measureValue: Double,
     val measureUnit: String,
-    val dailyCalculation: DailyCalculation? = null
+    val sensorError: Boolean = false,
+    val dailyCalculation: DailyCalculation? = null,
 ) {
     @Serializable
     data class DailyCalculation(
         val maxValue: Double,
         val minValue: Double,
         val averageValue: Double,
+        val maxValueTime: String?,
+        val minValueTime: String?,
     )
 }

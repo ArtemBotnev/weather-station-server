@@ -19,6 +19,7 @@ import kotlin.math.min
 
 private const val FACTOR_START_VALUE = 1
 private const val FACTOR_INCREMENT_STEP = 1
+private const val ROUND_SIGNS_AFTER_POINT = 3
 
 internal class MeasureDailyCalculationService(
     private val repository: MeasureRepository,
@@ -53,9 +54,11 @@ internal class MeasureDailyCalculationService(
 
     private suspend fun calculateDailyValues(measurement: Measurement): List<MeasureDailyCalculation> {
         return if (measurement.isNewDay) {
-            measurement.measures.map { it.toNewDayCalculations() }
+            measurement.measures.mapNotNull { it.toNewDayCalculations(measurement.timestamp) }
         } else {
-            measurement.measures.map { it.toCalculations() }
+            measurement.measures
+                .toValidMeasures()
+                .map { it.toCalculations(measurement.timestamp) }
         }
     }
 
@@ -63,19 +66,26 @@ internal class MeasureDailyCalculationService(
         return if (factor == 0) {
             newValue
         } else {
-            (oldAverageValue * factor + newValue) / (factor + FACTOR_INCREMENT_STEP)
+            ((oldAverageValue * factor + newValue) / (factor + FACTOR_INCREMENT_STEP))
+                .roundTo(ROUND_SIGNS_AFTER_POINT)
         }
     }
 
-    private fun Measure.toNewDayCalculations() = MeasureDailyCalculation(
-        sensorId = sensorId,
-        maxValue = measureValue,
-        minValue = measureValue,
-        averageValue = measureValue,
-        factor = FACTOR_START_VALUE,
-    )
+    private fun Measure.toNewDayCalculations(timeStamp: String? = null): MeasureDailyCalculation? {
+        if (sensorError) return null
 
-    private suspend fun Measure.toCalculations(): MeasureDailyCalculation {
+        return MeasureDailyCalculation(
+            sensorId = sensorId,
+            maxValue = measureValue,
+            minValue = measureValue,
+            maxValueTime = timeStamp,
+            minValueTime = timeStamp,
+            averageValue = measureValue,
+            factor = FACTOR_START_VALUE,
+        )
+    }
+
+    private suspend fun Measure.toCalculations(timeStamp: String? = null): MeasureDailyCalculation {
         val old = repository.getMeasureDailyCalculation(sensorId)
 
         return MeasureDailyCalculation(
@@ -90,6 +100,15 @@ internal class MeasureDailyCalculationService(
                 )
             } ?: measureValue,
             factor = old?.let { it.factor + FACTOR_INCREMENT_STEP } ?: FACTOR_START_VALUE,
+            maxValueTime = old?.let {
+                if (measureValue > it.maxValue) timeStamp else it.maxValueTime
+            },
+            minValueTime = old?.let {
+                if (measureValue < it.minValue) timeStamp else it.minValueTime
+            }
         )
     }
+
+    // if sensor reading was error - do not take measurement
+    private fun List<Measure>.toValidMeasures(): List<Measure> = filter { !it.sensorError }
 }

@@ -22,6 +22,7 @@ internal class MeasureService(
             timestamp = measurement.timestamp ?: dateTimePack.timestamp,
             currentDay = dateTimePack.dayOfMonth,
             isNewDay = isNewDay,
+            measures = measurement.measures,
         )
 
         repository.setMeasurement(updatedMeasurement)
@@ -54,6 +55,8 @@ internal class MeasureService(
             maxValue = maxValue,
             minValue = minValue,
             averageValue = averageValue,
+            maxValueTime = maxValueTime,
+            minValueTime = minValueTime
         )
     }
 }

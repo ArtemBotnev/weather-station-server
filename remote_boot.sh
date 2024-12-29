@@ -15,13 +15,14 @@ if [[ $# -eq 0 ]]
 then
   jar_name=$(ls build/libs | grep .jar)
   jar_path=$(pwd)/build/libs/${jar_name}
-  external_files_path=$(pwd)/${external_files}
+#  external_files_path=$(pwd)/${external_files}
   remote=${remote_name}@${remote_addr}
 
-  sshpass -p ${remote_password} scp -r ${jar_path} ${external_files_path} ${remote}:${remote_path}
-  if [[ $# -eq 0 ]]
-  then
-    sshpass -p ${remote_password} ssh -t ${remote} "java -jar ${remote_path}/${jar_name}"
-
-  fi
+  sshpass -p ${remote_password} scp -r ${jar_path} ${remote}:${remote_path}
+#  sshpass -p ${remote_password} scp -r ${jar_path} ${external_files_path} ${remote}:${remote_path}
+#  if [[ $# -eq 0 ]]
+#  then
+#    sshpass -p ${remote_password} ssh -t ${remote} "java -jar ${remote_path}/${jar_name}"
+#
+#  fi
 fi
