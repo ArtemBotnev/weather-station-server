@@ -4,10 +4,11 @@ import com.artembotnev.weather.station.domain.data.MeasureRepository
 import com.artembotnev.weather.station.storage.MeasureInMemoryStorage
 import com.artembotnev.weather.station.storage.MeasureInMemoryStorageImpl
 import com.artembotnev.weather.station.repository.MeasureRepositoryImpl
-import com.artembotnev.weather.station.domain.MeasureService
-import com.artembotnev.weather.station.domain.MeasureDailyCalculationService
-import com.artembotnev.weather.station.domain.DateTimeService
-import com.artembotnev.weather.station.domain.DeviceService
+import com.artembotnev.weather.station.domain.service.MeasureService
+import com.artembotnev.weather.station.domain.service.MeasureDailyCalculationService
+import com.artembotnev.weather.station.domain.service.DateTimeService
+import com.artembotnev.weather.station.domain.service.DeviceService
+import com.artembotnev.weather.station.domain.service.DeviceDailyErrorsService
 import kotlinx.coroutines.Dispatchers
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
@@ -27,12 +28,21 @@ internal val appModule = module {
     singleOf(::MeasureService)
     singleOf(::DateTimeService)
     singleOf(::DeviceService)
+    singleOf(::DeviceDailyErrorsService)
 
     single {
         MeasureDailyCalculationService(
             get(),
             get(named("Computation")),
             get(named("IO"))
+        )
+    }
+
+    single {
+        DeviceDailyErrorsService(
+            get(),
+            get(named("IO")),
+            get(),
         )
     }
 }
