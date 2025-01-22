@@ -1,9 +1,10 @@
-package com.artembotnev.weather.station.domain
+package com.artembotnev.weather.station.domain.service
 
 import com.artembotnev.weather.station.domain.data.MeasureRepository
 import com.artembotnev.weather.station.domain.entity.Measure
 import com.artembotnev.weather.station.domain.entity.MeasureDailyCalculation
 import com.artembotnev.weather.station.domain.entity.Measurement
+import com.artembotnev.weather.station.domain.roundTo
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -66,8 +67,7 @@ internal class MeasureDailyCalculationService(
         return if (factor == 0) {
             newValue
         } else {
-            ((oldAverageValue * factor + newValue) / (factor + FACTOR_INCREMENT_STEP))
-                .roundTo(ROUND_SIGNS_AFTER_POINT)
+            ((oldAverageValue * factor + newValue) / (factor + FACTOR_INCREMENT_STEP)) roundTo ROUND_SIGNS_AFTER_POINT
         }
     }
 

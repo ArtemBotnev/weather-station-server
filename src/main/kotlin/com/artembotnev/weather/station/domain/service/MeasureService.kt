@@ -1,4 +1,4 @@
-package com.artembotnev.weather.station.domain
+package com.artembotnev.weather.station.domain.service
 
 import com.artembotnev.weather.station.domain.data.MeasureRepository
 import com.artembotnev.weather.station.domain.entity.Measure

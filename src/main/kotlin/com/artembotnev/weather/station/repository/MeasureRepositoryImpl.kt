@@ -4,6 +4,7 @@ import com.artembotnev.weather.station.domain.data.MeasureRepository
 import com.artembotnev.weather.station.domain.entity.Device
 import com.artembotnev.weather.station.domain.entity.MeasureDailyCalculation
 import com.artembotnev.weather.station.domain.entity.Measurement
+import com.artembotnev.weather.station.domain.entity.analytics.DeviceDailyErrors
 import com.artembotnev.weather.station.storage.MeasureInMemoryStorage
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -38,6 +39,16 @@ internal class MeasureRepositoryImpl(private val storage: MeasureInMemoryStorage
     override suspend fun getDevices(): List<Device> {
         return storage.getDevices()
     }
+
+    override suspend fun setDeviceDailyErrors(deviceDailyErrors: DeviceDailyErrors) {
+        storage.setDeviceDailyErrors(deviceDailyErrors)
+    }
+
+    override suspend fun getDeviceDailyErrors(deviceId: Int): DeviceDailyErrors? {
+        return storage.getDeviceDailyErrors(deviceId)
+    }
+
+    override suspend fun getDeviceListDailyErrors(): List<DeviceDailyErrors> = storage.getDeviceListDailyErrors()
 
     override suspend fun setMeasureDailyCalculations(mdcList: List<MeasureDailyCalculation>) {
         storage.setMeasureDailyCalculations(mdcList)
